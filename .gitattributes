@@ -1,0 +1,12 @@
+# Normalize line endings — store text files as LF in the repo
+# (keeps the repo clean and matches the Linux deployment host)
+* text=auto eol=lf
+
+# Treat these as binary (never normalize)
+*.rar binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.mp4 binary
