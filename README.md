@@ -11,6 +11,7 @@
 ![SQLite](https://img.shields.io/badge/SQLite-WAL-003B57?logo=sqlite&logoColor=white)
 ![Async](https://img.shields.io/badge/async-aiosqlite-4B8BBE)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)
+![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-D97757?logo=anthropic&logoColor=white)
 
 </div>
 
@@ -246,5 +247,7 @@ python InstaGramDownloaderBot.py
 ---
 
 Made with ❤️ for the Persian Telegram community
+
+🤖 Architected & documented with **[Claude Code](https://claude.com/claude-code)**
 
 </div>
