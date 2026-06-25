@@ -16,20 +16,6 @@
 
 ---
 
-## 📸 Screenshots
-
-> _Screenshots coming soon — drop images into `docs/screenshots/` and uncomment the block below._
-
-<!--
-<p align="center">
-  <img src="docs/screenshots/start.png"    width="30%" alt="Start & language pick" />
-  <img src="docs/screenshots/download.png" width="30%" alt="Download a Reel" />
-  <img src="docs/screenshots/vip.png"      width="30%" alt="VIP purchase" />
-</p>
--->
-
----
-
 ## 🇬🇧 English
 
 ### ✨ Overview
@@ -122,8 +108,8 @@ InstaGramDownload/
 
 ```bash
 # 1) Clone
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/xcoolerboy/Instagram-Downloader-Bot.git
+cd Instagram-Downloader-Bot
 
 # 2) (optional) virtual environment
 python -m venv .venv
@@ -230,8 +216,8 @@ Released under the **MIT License** — see [`LICENSE`](LICENSE). You're free to 
 
 ```bash
 # ۱) کلون
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/xcoolerboy/Instagram-Downloader-Bot.git
+cd Instagram-Downloader-Bot
 
 # ۲) (اختیاری) محیطِ مجازی
 python -m venv .venv
