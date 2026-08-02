@@ -604,6 +604,50 @@ def _download_once(url: str, workdir: Path, sessionid: str, proxy: str) -> Media
     raise DownloadError(combined)
 
 
+def login_and_get_sessionid(username: str, password: str, proxy: str = "") -> str:
+    """ورود به اکانت اینستاگرام با یوزرنیم و پسورد و استخراج کوکی sessionid."""
+    import instaloader
+    from instaloader.exceptions import (
+        BadCredentialsException,
+        ConnectionException,
+        InvalidArgumentException,
+        TwoFactorAuthRequiredException,
+    )
+
+    if not username or not password:
+        raise ValueError("نام کاربری و رمز عبور نباید خالی باشند.")
+
+    loader = instaloader.Instaloader(
+        quiet=True,
+        download_comments=False,
+        save_metadata=False,
+        user_agent=_UA,
+    )
+    if proxy:
+        loader.context._session.proxies.update(_proxies(proxy) or {})
+
+    try:
+        loader.login(username.strip(), password.strip())
+    except BadCredentialsException as exc:
+        raise ValueError("نام کاربری یا رمز عبور اشتباه است.") from exc
+    except TwoFactorAuthRequiredException as exc:
+        raise ValueError("این اکانت نیاز به ورود دو مرحله‌ای (2FA) دارد.") from exc
+    except InvalidArgumentException as exc:
+        raise ValueError(f"ورودی نامعتبر: {exc}") from exc
+    except ConnectionException as exc:
+        raise ValueError(f"خطا در اتصال به اینستاگرام: {exc}") from exc
+    except Exception as exc:
+        raise ValueError(f"ورود ناموفق بود: {exc}") from exc
+
+    sessionid = (
+        loader.context._session.cookies.get("sessionid", domain=".instagram.com")
+        or loader.context._session.cookies.get("sessionid")
+    )
+    if not sessionid:
+        raise ValueError("ورود انجام شد ولی کوکی sessionid یافت نشد.")
+    return sessionid
+
+
 async def download(url: str, workdir: Path) -> MediaResult:
     """با چند کوکی و چند روش تلاش می‌کنه؛ اولین موفقیت برگردونده می‌شه.
 
@@ -617,33 +661,35 @@ async def download(url: str, workdir: Path) -> MediaResult:
     یک استخرن و به‌صورتِ چرخشی بینِ تلاش‌ها پخش می‌شن تا سهمیه‌ی یک پروکسی زود ته نکشه.
     """
     candidates = await database.get_all_cookies() or [""]
-    random.shuffle(candidates)
-    proxies = await database.get_all_proxies()
-    random.shuffle(proxies)
+    proxies = await database.get_all_proxies() or [""]
+
+    combinations = [(c, p) for c in candidates for p in proxies]
+    random.shuffle(combinations)
+    
+    # سقف ۱۰ تلاش برای جلوگیری از طولانی شدن بیش از حد
+    combinations = combinations[:10]
 
     errors: list[str] = []
     auth_problem = False
 
-    for idx, sessionid in enumerate(candidates):
-        # پروکسیِ این تلاش از استخر به‌صورتِ چرخشی انتخاب می‌شه (خالی = بدونِ پروکسی)
-        proxy = proxies[idx % len(proxies)] if proxies else ""
-        cookie_dir = workdir / f"cookie{idx}"
+    for idx, (sessionid, proxy) in enumerate(combinations):
+        cookie_dir = workdir / f"attempt{idx}"
         cookie_dir.mkdir(parents=True, exist_ok=True)
         try:
             return await asyncio.to_thread(
                 _download_once, url, cookie_dir, sessionid, proxy
             )
         except FileTooLargeError:
-            raise  # حجم به کوکی ربطی نداره؛ تلاش بیشتر بی‌فایده‌ست
+            raise  # حجم به کوکی/پروکسی ربطی نداره؛ تلاش بیشتر بی‌فایده‌ست
         except AuthRequiredError as exc:
             auth_problem = True
-            logger.info("Cookie #%d hit auth/rate-limit, trying next", idx)
-            errors.append(f"cookie#{idx}: {exc}")
+            logger.info("Attempt #%d hit auth/rate-limit, trying next", idx)
+            errors.append(f"attempt#{idx}: {exc}")
         except DownloadError as exc:
-            logger.info("Cookie #%d failed, trying next", idx)
-            errors.append(f"cookie#{idx}: {exc}")
+            logger.info("Attempt #%d failed, trying next", idx)
+            errors.append(f"attempt#{idx}: {exc}")
 
     combined = " || ".join(errors)
     if auth_problem or _looks_like_auth_failure(combined):
         raise AuthRequiredError("لاگین/کوکی لازمه ← " + combined)
-    raise DownloadError("همه روش‌ها و کوکی‌ها ناموفق بودند ← " + combined)
+    raise DownloadError("همه روش‌ها و ترکیب‌ها ناموفق بودند ← " + combined)

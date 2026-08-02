@@ -79,6 +79,7 @@ _ADMIN_COMMANDS_FA = _PUBLIC_COMMANDS_FA + [
     BotCommand("broadcast", "ارسال پیام همگانی"),
     BotCommand("undobroadcast", "حذف آخرین پیام همگانی"),
     BotCommand("addcookie", "افزودن کوکی (بدون ری‌استارت)"),
+    BotCommand("login", "ورود با اکانت و استخراج کوکی"),
     BotCommand("addproxy", "افزودن پروکسی رزیدنشال"),
     BotCommand("sources", "مدیریت کوکی/پروکسی زنده"),
     BotCommand("stats", "آمار ربات"),
@@ -99,6 +100,7 @@ _ADMIN_COMMANDS_EN = _PUBLIC_COMMANDS_EN + [
     BotCommand("broadcast", "Send a broadcast message"),
     BotCommand("undobroadcast", "Delete the last broadcast"),
     BotCommand("addcookie", "Add a cookie (no restart)"),
+    BotCommand("login", "Log in with account & extract cookie"),
     BotCommand("addproxy", "Add a residential proxy"),
     BotCommand("sources", "Manage live cookies/proxies"),
     BotCommand("stats", "Bot statistics"),
@@ -184,8 +186,11 @@ def main() -> None:
 
     # مدیریتِ زنده‌ی منابعِ دانلود (کوکی/پروکسی) — فقط ادمین، بدونِ ری‌استارتِ ربات
     app.add_handler(CommandHandler("addcookie", sources.addcookie_command))
+    app.add_handler(CommandHandler("login", sources.login_command))
+    app.add_handler(CommandHandler("addaccount", sources.login_command))
     app.add_handler(CommandHandler("addproxy", sources.addproxy_command))
     app.add_handler(CommandHandler("sources", sources.sources_command))
+
     app.add_handler(
         CallbackQueryHandler(sources.delete_callback, pattern=f"^{SRC_DEL_PREFIX}:")
     )

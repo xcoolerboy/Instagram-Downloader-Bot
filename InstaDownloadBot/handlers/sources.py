@@ -177,3 +177,40 @@ async def delete_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await query.edit_message_text(text, reply_markup=kb)
     except Exception:  # noqa: BLE001 - اگه پیام عوض نشده یا قابلِ ویرایش نبود، مهم نیست
         pass
+
+
+async def login_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """/login یا /addaccount — ورود با نام کاربری و رمز عبور اینستاگرام و استخراج کوکی (فقط ادمین، چت خصوصی)."""
+    import asyncio
+    from InstaDownloadBot.services.instagram import login_and_get_sessionid
+
+    lang = await _user_lang(update.effective_user.id)
+    tr = t.L(lang)
+    err = _admin_private_ok(update, tr)
+    if err is not None:
+        await update.effective_message.reply_text(err)
+        return
+
+    parts = (update.effective_message.text or "").split()
+    if len(parts) < 3:
+        await update.effective_message.reply_text(tr.LOGIN_USAGE)
+        return
+
+    username = parts[1]
+    password = parts[2]
+    proxy = parts[3] if len(parts) > 3 else ""
+
+    status_msg = await update.effective_message.reply_text(tr.LOGIN_START)
+
+    try:
+        sessionid = await asyncio.to_thread(
+            login_and_get_sessionid, username, password, proxy
+        )
+        await database.add_cookie(sessionid)
+        total = len(await database.get_all_cookies())
+        masked = _mask_cookie(sessionid)
+        await status_msg.edit_text(tr.LOGIN_OK.format(cookie=masked, total=total))
+    except Exception as exc:
+        logger.error("Login command failed for %s: %s", username, exc)
+        await status_msg.edit_text(tr.LOGIN_FAIL.format(error=str(exc)))
+

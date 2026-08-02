@@ -133,6 +133,10 @@ INSTAGRAM_SESSIONIDS: list[str] = _parse_cookie_list(
 # (برای socks5 باید بسته‌ی PySocks نصب باشه: pip install "requests[socks]")
 INSTAGRAM_PROXY: str = _clean(os.getenv("INSTAGRAM_PROXY"))
 
+# نام کاربری و رمز عبور اکانت اینستاگرام برای ورود خودکار و استخراج sessionid
+INSTAGRAM_USERNAME: str = _clean(os.getenv("INSTAGRAM_USERNAME"))
+INSTAGRAM_PASSWORD: str = _clean(os.getenv("INSTAGRAM_PASSWORD"))
+
 
 def validate() -> None:
     """قبل از اجرا بررسی می‌کنه که تنظیمات حیاتی پر شده باشن."""

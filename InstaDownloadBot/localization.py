@@ -908,6 +908,51 @@ _S: dict[str, object] = {
         "fa": "ℹ️ چیزی اضافه نشد (کوکی خالی بود یا از قبل ثبت شده).",
         "en": "ℹ️ Nothing added (the cookie was empty or already registered).",
     },
+    "LOGIN_USAGE": {
+        "fa": (
+            "🔐 ورود با اکانت و استخراج کوکی (sessionid):\n"
+            "/login <نام_کاربری> <رمز_عبور> [پروکسی_اختیاری]\n\n"
+            "مثال:\n"
+            "/login my_user my_pass123\n"
+            "یا با پروکسی:\n"
+            "/login my_user my_pass123 http://user:pass@host:port\n\n"
+            "🔒 برای امنیت، بلافاصله بعد از ارسال، پیام حاوی پسورد را پاک کنید."
+        ),
+        "en": (
+            "🔐 Login with account to extract cookie (sessionid):\n"
+            "/login <username> <password> [optional_proxy]\n\n"
+            "Example:\n"
+            "/login my_user my_pass123\n"
+            "Or with proxy:\n"
+            "/login my_user my_pass123 http://user:pass@host:port\n\n"
+            "🔒 For security, delete the message containing your password immediately."
+        ),
+    },
+    "LOGIN_START": {
+        "fa": "⏳ در حال ورود به اینستاگرام و استخراج کوکی sessionid... لطفاً چند لحظه صبر کنید.",
+        "en": "⏳ Logging into Instagram and extracting sessionid cookie... Please wait.",
+    },
+    "LOGIN_OK": {
+        "fa": (
+            "✅ ورود با موفقیت انجام شد!\n\n"
+            "🔑 کوکی sessionid استخراج گردید و به دیتابیس اضافه شد.\n"
+            "کوکی: {cookie}\n"
+            "تعداد کل کوکی‌های فعال: {total}\n\n"
+            "🔒 برای امنیت، لطفاً پیام‌های حاوی رمز عبور را پاک کنید."
+        ),
+        "en": (
+            "✅ Successfully logged in!\n\n"
+            "🔑 Extracted sessionid cookie and added to database.\n"
+            "Cookie: {cookie}\n"
+            "Total active cookies: {total}\n\n"
+            "🔒 For security, please delete the message containing your password."
+        ),
+    },
+    "LOGIN_FAIL": {
+        "fa": "❌ ورود ناموفق بود:\n{error}",
+        "en": "❌ Login failed:\n{error}",
+    },
+
     "ADDPROXY_USAGE": {
         "fa": (
             "🌐 افزودنِ پروکسیِ رزیدنشال — بدونِ خاموش/روشنِ ربات:\n"
